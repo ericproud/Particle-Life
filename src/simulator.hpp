@@ -3,7 +3,7 @@
 #include <vector>
 #include "particle.hpp"
 #include "config.hpp"
-#include "attraction_modifier.hpp"
+#include "parameter_modifiers.hpp"
 
 //const int SCREEN_HEIGHT = 1920;
 //const int SCREEN_WIDTH = 1080;
