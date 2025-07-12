@@ -42,7 +42,19 @@ int main()
                     if (sim.decrease_particles_button.isPressed(click_pos)) {
                         sim.removeParticles(500);
                     }
-
+                    if (sim.parameter_modifier.beta_slider.isPressed(click_pos)) {
+                        sim.parameter_modifier.beta_slider.setKnobPos(click_pos);
+                        sim.BETA = sim.parameter_modifier.beta_slider.getValue();
+                    }
+                    if (sim.parameter_modifier.d_max_slider.isPressed(click_pos)) {
+                        sim.parameter_modifier.d_max_slider.setKnobPos(click_pos);
+                        sim.D_MAX = sim.parameter_modifier.d_max_slider.getValue();
+                    }
+                    if (sim.parameter_modifier.dt_half_slider.isPressed(click_pos)) {
+                        sim.parameter_modifier.dt_half_slider.setKnobPos(click_pos);
+                        sim.DT_HALF = sim.parameter_modifier.dt_half_slider.getValue();
+                    }
+                    sim.parameter_modifier.updateParameters();
                 }
             }
             //RESETTING ATTRACTION MATRIX TO ZERO'S
@@ -113,7 +125,8 @@ int main()
         displayer.displayParticles(sim);
         displayer.displayAttractionModifier(sim);
         displayer.displayFPS(event_fps, physics_fps, graphics_fps);
-        displayer.displayParticleCount(sim);
+        displayer.displayParticleCountAndDistribution(sim);
+        displayer.displayParameterModifier(sim);
         window.display();
 
         graphics_fps = sim.getFPS(clock);

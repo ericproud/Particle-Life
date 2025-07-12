@@ -17,6 +17,54 @@ struct Button {
     }
 };
 
+struct Slider {
+    sf::RectangleShape slider_zone;
+    sf::RectangleShape knob_zone;
+    float slider_len;
+    float knob_pos;
+    float min_val;
+    float max_val;
+
+    Slider(sf::Vector2f top_left, sf::Vector2f side_lengths, float min_value, float max_value, float default_value):
+    min_val(min_value),
+    max_val(max_value),
+    slider_len(side_lengths.x) {
+        slider_zone.setPosition(top_left);
+        slider_zone.setSize(side_lengths);
+        slider_zone.setFillColor(sf::Color(127, 127, 127));
+
+        knob_zone.setSize({side_lengths.y, side_lengths.y});
+        knob_zone.setOrigin({side_lengths.y / 2, side_lengths.y / 2});
+        knob_zone.setFillColor(sf::Color::Red);
+        knob_zone.setOutlineColor(sf::Color::Red);
+
+        setDefaultKnobPos(default_value);
+        knob_zone.setPosition({knob_zone.getPosition().x, top_left.y + side_lengths.y / 2});
+    }
+
+    bool isPressed(sf::Vector2f click_pos) {
+        return slider_zone.getGlobalBounds().contains(click_pos);
+    }
+
+    void setKnobPos(sf::Vector2f click_pos) {
+        knob_pos = click_pos.x;
+        knob_zone.setPosition({knob_pos, knob_zone.getPosition().y});
+    }
+
+    void setDefaultKnobPos(float default_val) {
+        float range = max_val - min_val;
+        float delta = default_val - min_val;
+        knob_pos = slider_zone.getPosition().x + delta / range * slider_len;
+        knob_zone.setPosition({knob_pos, knob_zone.getPosition().y});
+    }
+
+    float getValue() {
+        float relative_slide = knob_pos - slider_zone.getPosition().x;
+        float slide_pct = relative_slide / slider_len;
+        return min_val + slide_pct * (max_val - min_val);
+    }
+};
+
 class AttractionModifier {
 public:
     float attraction_matrix[7][7];
@@ -27,7 +75,7 @@ public:
     AttractionModifier(sf::Vector2f top_left, int num_types) {
 
         //Initialize buttons
-        float box_size = 300.0f / (1.0f + static_cast<float>(num_types));
+        float box_size = 400.0f / (1.0f + static_cast<float>(num_types));
 
         for (int x{0}; x < num_types; ++x) {
             for (int y{0}; y < num_types; ++y) {
@@ -74,7 +122,7 @@ public:
     }
 
     void changeButtonMatrix(int num_types) {
-        float box_size = 300.0f / (1.0f + static_cast<float>(num_types));
+        float box_size = 400.0f / (1.0f + static_cast<float>(num_types));
         for (int x{0}; x < num_types; ++x) {
             for (int y{0}; y < num_types; ++y) {
                 sf::Vector2f temp_pos = {tl.x + (x + 1) * box_size, tl.y + (y + 1) * box_size};
@@ -119,5 +167,36 @@ public:
             }
         }
     }
+};
 
+class ParameterModifier {
+public:
+    Slider beta_slider;
+    Slider d_max_slider;
+    Slider dt_half_slider;
+    float BETA;
+    float D_MAX;
+    float DT_HALF;
+    ParameterModifier(sf::Vector2f tl_BETA, sf::Vector2f tl_D_MAX, sf::Vector2f tl_DT_HALF):
+    beta_slider(tl_BETA, {400, 40}, 0.1, 1, 0.3),
+    d_max_slider(tl_D_MAX, {400, 40}, 2, 40, 40),
+    dt_half_slider(tl_DT_HALF, {400, 40}, 0.004f, 0.08f, 0.04f),
+    BETA(0.3f),
+    D_MAX(40),
+    DT_HALF(0.4f)
+    {}
+
+    float roundToDecimalPlaces(float value, int places) {
+        float scale = std::pow(10.0f, places);
+        return std::round(value * scale) / scale;
+    }
+
+    void updateParameters() {
+        BETA =   roundToDecimalPlaces(beta_slider.getValue(), 2);
+        printf("BETA: %f\n", BETA);
+        D_MAX = roundToDecimalPlaces(d_max_slider.getValue(), 1);
+        printf("D_MAX: %f\n", D_MAX);
+        DT_HALF = roundToDecimalPlaces(dt_half_slider.getValue(),2);
+        printf("DT_HALF: %f\n", DT_HALF);
+    }
 };

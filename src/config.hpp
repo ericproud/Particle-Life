@@ -9,11 +9,6 @@ const int SCREEN_WIDTH = 1080;
 const sf::Vector2f PARTICLE_AREA_TOP_LEFT = {840, 0};
 const int PARTICLE_AREA_SIDE_LENGTHS = 1080;
 
-const float BETA = 0.3f;
-const float D_MAX = 40.0f;
-const float DT = 0.02f;
-const float DT_HALF = 0.04f;
-
 struct ColorLess {
     bool operator()(const sf::Color& a, const sf::Color& b) const {
         // lex order by r, g, b, a

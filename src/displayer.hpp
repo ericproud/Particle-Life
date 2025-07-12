@@ -8,7 +8,7 @@ public:
     sf::CircleShape circle;
     sf::RectangleShape rect;
     sf::Font font{"assets/Swansea.ttf"};
-    sf::Text text{font, "", 20};
+    sf::Text text{font, "", 80};
     std::string string;
 
     explicit
@@ -42,7 +42,7 @@ public:
     }
 
     void displayParticles(Simulator &sim) {
-
+        drawUIBox({601, 1}, 1318, 1078);
         circle.setRadius(1.0f);
         circle.setPointCount(64);
         circle.setOrigin({1.0f, 1.0f});
@@ -55,10 +55,24 @@ public:
     }
 
     void displayAttractionModifier(Simulator &sim) {
-        drawUIBox({1, 61}, 400, 350);
+        drawUIBox({1, 72}, 600, 544);
 
-        sf::Vector2f top_left = sim.attraction_modifier.tl;
-        float box_size = 300.0f / (1.0f + static_cast<float>(sim.num_colors));
+        text.setFont(font);
+        text.setFillColor(sf::Color::White);
+        text.setCharacterSize(30);
+
+        string = "ATTRACTION MATRIX:";
+        text.setString(string);
+        text.setPosition({10, 72});
+        m_target.draw(text);
+
+        string = "RANDOMIZE\n\n\nPRESET MODE";
+        text.setString(string);
+        text.setPosition({10, 532});
+        m_target.draw(text);
+
+        sf::Vector2f top_left = sim.attraction_modifier.tl ;
+        float box_size = 400.0f / (1.0f + static_cast<float>(sim.num_colors));
 
         for (int i{0}; i < sim.num_colors; i++) {
             drawSquareBox(top_left + sf::Vector2f((i + 1) * box_size, 0), box_size, true, idx_to_color[i]);
@@ -76,42 +90,90 @@ public:
     }
 
     void displayFPS(int event_fps, int physics_fps, int graphics_fps) {
-        drawUIBox({1.0f, 1.0f}, 400, 60);
+        drawUIBox({1.0f, 1.0f}, 600, 70);
 
         text.setFont(font);
         text.setFillColor(sf::Color::White);
-        text.setCharacterSize(20);
+        text.setCharacterSize(30);
 
-        string = "Physics FPS: " + std::to_string(physics_fps);
+        string = "PHYSICS FPS: " + std::to_string(physics_fps) + "\n\n"
+               + "GRAPHICS FPS: " + std::to_string(graphics_fps);
         text.setString(string);
-        text.setPosition({1, 1});
-        m_target.draw(text);
-
-        string = "GRAPHICS FPS: " + std::to_string(graphics_fps);
-        text.setString(string);
-        text.setPosition({1, 21});
-        m_target.draw(text);
-
-        string = "EVENTS FPS: " + std::to_string(event_fps);
-        text.setString(string);
-        text.setPosition({1, 41});
+        text.setPosition({10, 1});
         m_target.draw(text);
     }
 
-    void displayParticleCount(Simulator &sim) {
+    void displayParticleCountAndDistribution(Simulator &sim) {
+        drawUIBox({1, 616}, 600, 290);
         int num_particles = sim.getParticleCount();
         text.setFont(font);
         text.setFillColor(sf::Color::White);
-        text.setCharacterSize(20);
-        string = "Number of particles: " + std::to_string(num_particles);
+        text.setCharacterSize(30);
+
+        string = "PARTICLE COUNT: " + std::to_string(num_particles) + "\n\nPARTICLE DISTRIBUTION:";
         text.setString(string);
-        text.setPosition({1, 800});
+        text.setPosition({10, 616});
         m_target.draw(text);
 
         m_target.draw(sim.increase_particles_button.button_zone);
         m_target.draw(sim.decrease_particles_button.button_zone);
+
+        std::array<float, 7> color_dist = sim.getColorDistribution();
+        sf::Vector2f top_left = {10, 700};
+
+        rect.setOutlineThickness(1);
+
+        for (int i{0}; i < 7; ++i) {
+            float length = static_cast<int>(500 * color_dist[i]);
+            rect.setFillColor(idx_to_color[i]);
+            rect.setOutlineColor(idx_to_color[i]);
+            rect.setPosition(top_left + sf::Vector2f(0, i * 20));
+            printf("%f", rect.getPosition().x);
+            rect.setSize({length, 20});
+            m_target.draw(rect);
+        }
+        string = "EQUALIZE DISTRIBUTION\n\nRANDOMIZE DISTRIBUTION";
+        text.setString(string);
+        text.setPosition({10, 841});
+        m_target.draw(text);
     }
 
+
+
+    void displaySlider(Slider &slider) {
+
+        m_target.draw(slider.slider_zone);
+        m_target.draw(slider.knob_zone);
+    }
+
+    void displayParameterModifier(Simulator &sim) {
+        drawUIBox({1, 906}, 600, 173);
+
+        text.setFont(font);
+        text.setFillColor(sf::Color::White);
+        text.setCharacterSize(30);
+
+        string = "BETA";
+        text.setString(string);
+        text.setPosition({10, 911});
+        m_target.draw(text);
+
+        displaySlider(sim.parameter_modifier.beta_slider);
+
+        string = "D_MAX";
+        text.setString(string);
+        text.setPosition({10, 971});
+        m_target.draw(text);
+
+        displaySlider(sim.parameter_modifier.d_max_slider);
+
+        string = "DT_HALF";
+        text.setString(string);
+        text.setPosition({10, 1031});
+        m_target.draw(text);
+
+        displaySlider(sim.parameter_modifier.dt_half_slider);
+    }
 
 
 private:
