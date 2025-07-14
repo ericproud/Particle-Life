@@ -154,7 +154,9 @@ public:
         }
     }
 
-    void snakeAttractinMatrix(int num_colors) {
+    void wormAttractinMatrix(int num_colors) {
+        zeroAttractionMatrix();
+
         for (int i{0}; i < num_colors; ++i) {
             for (int j{0}; j < num_colors; ++j) {
                 if (i == j) {
@@ -178,9 +180,9 @@ public:
     float D_MAX;
     float DT_HALF;
     ParameterModifier(sf::Vector2f tl_BETA, sf::Vector2f tl_D_MAX, sf::Vector2f tl_DT_HALF):
-    beta_slider(tl_BETA, {400, 40}, 0.1, 1, 0.3),
-    d_max_slider(tl_D_MAX, {400, 40}, 2, 40, 40),
-    dt_half_slider(tl_DT_HALF, {400, 40}, 0.004f, 0.08f, 0.04f),
+    beta_slider(tl_BETA, {370, 40}, 0.1, 1, 0.3),
+    d_max_slider(tl_D_MAX, {370, 40}, 2, 40, 40),
+    dt_half_slider(tl_DT_HALF, {370, 40}, 0.004f, 0.08f, 0.04f),
     BETA(0.3f),
     D_MAX(40),
     DT_HALF(0.4f)
@@ -191,12 +193,13 @@ public:
         return std::round(value * scale) / scale;
     }
 
-    void updateParameters() {
+    void updateBETA() {
         BETA =   roundToDecimalPlaces(beta_slider.getValue(), 2);
-        printf("BETA: %f\n", BETA);
-        D_MAX = roundToDecimalPlaces(d_max_slider.getValue(), 1);
-        printf("D_MAX: %f\n", D_MAX);
-        DT_HALF = roundToDecimalPlaces(dt_half_slider.getValue(),2);
-        printf("DT_HALF: %f\n", DT_HALF);
+    }
+    void updateD_MAX() {
+        D_MAX = roundToDecimalPlaces(d_max_slider.getValue(), 2);
+    }
+    void updateDT_HALF() {
+        DT_HALF = roundToDecimalPlaces(dt_half_slider.getValue(),3);
     }
 };

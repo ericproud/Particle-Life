@@ -25,89 +25,83 @@ int main()
             {
                 window.close();
             }
-            //HANDLING ATTRACTION MATRIX BUTTON PRESSES
             if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
                     auto click_pos = static_cast<sf::Vector2f>(mouseButtonPressed->position);
+
+                    //HANDLING MATRIX INTERACTIONS
                     for (int i{0}; i < 7; ++i) {
                         for (int j{0}; j < 7; ++j) {
                             if (sim.attraction_modifier.button_matrix[i][j].isPressed(click_pos)) {
                                 sim.attraction_modifier.updateButton(i, j);
+                                sim.is_worm_mode = false;
                             }
                         }
                     }
+                    if (sim.increase_color_count_button.isPressed(click_pos)) {
+                        if (sim.num_colors < 7) {
+                            sim.num_colors++;
+                        }
+                        else {
+                            sim.num_colors = 1;
+                        }
+                        sim.evenlyDiststributeParticleColors();
+                        if (sim.is_worm_mode) {
+                            sim.attraction_modifier.wormAttractinMatrix(sim.num_colors);
+                        }
+                    }
+                    if (sim.decrease_color_count_button.isPressed(click_pos)) {
+                        if (sim.num_colors > 1) {
+                            sim.num_colors--;
+                        }
+                        else {
+                            sim.num_colors = 7;
+                        }
+                        sim.evenlyDiststributeParticleColors();
+                        if (sim.is_worm_mode) {
+                            sim.attraction_modifier.wormAttractinMatrix(sim.num_colors);
+                        }
+                    }
+                    if (sim.reset_matrix_button.isPressed(click_pos)) {
+                        sim.attraction_modifier.zeroAttractionMatrix();
+                        sim.is_worm_mode = false;
+                    }
+                    if (sim.randomize_matrix_button.isPressed(click_pos)) {
+                        sim.attraction_modifier.randomizeAttractionMatrix();
+                        sim.is_worm_mode = false;
+                    }
+                    if (sim.worm_mode_button.isPressed(click_pos)) {
+                        sim.attraction_modifier.wormAttractinMatrix(sim.num_colors);
+                        sim.is_worm_mode = true;
+                    }
+
+                    //HANDLING PARTICLE COUNT/COLOR INTERACTIONS
                     if (sim.increase_particles_button.isPressed(click_pos)) {
                         sim.insertParticlesEvenDistribution(500, sim.num_colors);
                     }
                     if (sim.decrease_particles_button.isPressed(click_pos)) {
                         sim.removeParticles(500);
                     }
+                    if (sim.randomize_distribution_button.isPressed(click_pos)) {
+                        sim.randomlyDistributeParticleColors();
+                    }
+                    if (sim.equalize_distribution_button.isPressed(click_pos)) {
+                        sim.evenlyDiststributeParticleColors();
+                    }
+
+                    //HANDLING PARAMETER INTERACTIONS
                     if (sim.parameter_modifier.beta_slider.isPressed(click_pos)) {
                         sim.parameter_modifier.beta_slider.setKnobPos(click_pos);
-                        sim.BETA = sim.parameter_modifier.beta_slider.getValue();
+                        sim.parameter_modifier.updateBETA();
                     }
                     if (sim.parameter_modifier.d_max_slider.isPressed(click_pos)) {
                         sim.parameter_modifier.d_max_slider.setKnobPos(click_pos);
-                        sim.D_MAX = sim.parameter_modifier.d_max_slider.getValue();
+                        sim.parameter_modifier.updateD_MAX();
                     }
                     if (sim.parameter_modifier.dt_half_slider.isPressed(click_pos)) {
                         sim.parameter_modifier.dt_half_slider.setKnobPos(click_pos);
-                        sim.DT_HALF = sim.parameter_modifier.dt_half_slider.getValue();
+                        sim.parameter_modifier.updateDT_HALF();
                     }
-                    sim.parameter_modifier.updateParameters();
-                }
-            }
-            //RESETTING ATTRACTION MATRIX TO ZERO'S
-            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-                if (keyPressed->code == sf::Keyboard::Key::Z) {
-                    sim.attraction_modifier.zeroAttractionMatrix();
-                }
-            }
-            //RANDOMIZING ATTRACTION MATRIX
-            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-                if (keyPressed->code == sf::Keyboard::Key::R) {
-                    sim.attraction_modifier.randomizeAttractionMatrix();
-                }
-            }
-            //INCREASING/DECREASING NUMBER OF COLORS
-            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-                if (keyPressed->code == sf::Keyboard::Key::P) {
-                    if (sim.num_colors < 7) {
-                        sim.setNumColors(sim.num_colors + 1);
-                    }
-                    else {
-                        sim.setNumColors(1);
-                    }
-
-                    sim.attraction_modifier.changeButtonMatrix(sim.num_colors);
-                    sim.evenlyDiststributeParticleColors();
-
-                    if (sim.matrix_mode == 3) {
-                        sim.attraction_modifier.zeroAttractionMatrix();
-                        sim.attraction_modifier.snakeAttractinMatrix(sim.num_colors);
-                    }
-                }
-                if (keyPressed->code == sf::Keyboard::Key::O) {
-                    if (sim.num_colors > 1) {
-                        sim.setNumColors(sim.num_colors - 1);
-                    }
-                    else {
-                        sim.setNumColors(7);
-                    }
-                    sim.attraction_modifier.changeButtonMatrix(sim.num_colors);
-                    sim.evenlyDiststributeParticleColors();
-
-                    if (sim.matrix_mode == 3) {
-                        sim.attraction_modifier.zeroAttractionMatrix();
-                        sim.attraction_modifier.snakeAttractinMatrix(sim.num_colors);
-                    }
-                }
-                if (keyPressed->code == sf::Keyboard::Key::D) {
-                    sim.evenlyDiststributeParticleColors();
-                }
-                if (keyPressed->code == sf::Keyboard::Key::S) {
-                    sim.attraction_modifier.snakeAttractinMatrix(sim.num_colors);
-                    sim.matrix_mode = 3;
                 }
             }
         }
