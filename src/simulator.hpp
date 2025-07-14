@@ -11,7 +11,7 @@
 
 struct Simulator {
     std::vector<Particle> particles;
-    std::vector<Particle*> partition[28][28];
+    std::vector<std::vector<std::vector<Particle*>>> partition;
     AttractionModifier attraction_modifier;
     ParameterModifier parameter_modifier;
     Button increase_particles_button;
@@ -31,6 +31,7 @@ struct Simulator {
     float DT_HALF;
     float DAMPING_FACTOR;
     bool is_worm_mode = false;
+    bool D_MAX_updated = false;
     //
 
     Simulator():
@@ -53,13 +54,19 @@ struct Simulator {
         DT(0.02f),
         DT_HALF(0.04f)
     {
-        for (int i{0}; i < 28; i++) {
-            for (int j{0}; j < 28; j++) {
-                partition[i][j].reserve(10000);
+        particles.reserve(50000);
+        int x_partitions = 1320 / static_cast<int>(D_MAX);
+        int y_partitions = 1080 / static_cast<int>(D_MAX);
+
+        partition.resize(x_partitions);
+        for (auto& col : partition) {
+            col.resize(y_partitions);
+            for (auto& cell : col) {
+                cell.reserve(100);
             }
         }
 
-        insertParticlesEvenDistribution(1000, 2);
+        insertParticlesEvenDistribution(10, 2);
         increase_particles_button.button_zone.setFillColor(sf::Color::Green);
         decrease_particles_button.button_zone.setFillColor(sf::Color::Red);
         increase_color_count_button.button_zone.setFillColor(sf::Color::Green);
@@ -92,30 +99,47 @@ struct Simulator {
 
     void buildPartition() {
         //DIMENSIONS 1320 X 1080
-        for (int i{0}; i < 28; ++i) {
-            for (int j{0}; j < 28; ++j) {
-                partition[i][j].clear();
+        int x_partitions = 1320 / static_cast<int>(D_MAX);
+        int y_partitions = 1080 / static_cast<int>(D_MAX);
+        float cell_width = 1320.0f / x_partitions;
+        float cell_height = 1080.0f / y_partitions;
+
+        if (D_MAX_updated) {
+            partition.resize(x_partitions);
+            for (auto& col : partition) {
+                col.resize(y_partitions);
+                for (auto& cell : col) {
+                    cell.reserve(100);
+                }
+            }
+            D_MAX_updated = false;
+        }
+        for (auto& column : partition) {
+            for (auto& cell : column) {
+                cell.clear();  // reuse memory instead of reallocating
             }
         }
-        //printf("H");
-        for (auto &p : particles) {
-            int x = static_cast<int>((p.pos.x - 840) * 0.025f);
-            int y = static_cast<int>(p.pos.y * 0.025f);
-            //printf("intserting in %d, %d \n", x, y);
-            partition[x][y].emplace_back(&p);
-        }
 
+        for (auto& p : particles) {
+            int x = static_cast<int>((p.pos.x - 600.0f) / cell_width);
+            int y = static_cast<int>(p.pos.y / cell_height);
+            if (x >= 0 && x < x_partitions && y >= 0 && y < y_partitions) {
+                partition[x][y].emplace_back(&p);
+            }
+        }
     }
 
     sf::Vector2f getAcceleration(int x, int y, Particle *p1) {
         sf::Vector2f accel_accumulator = {0,0};
+        int x_partitions = 1320 / static_cast<int>(D_MAX);
+        int y_partitions = 1080 / static_cast<int>(D_MAX);
 
         for (int xi{x - 1}; xi <= x + 1; ++xi) {
-            if (xi < 0 || xi >27) {
+            if (xi < 0 || xi >= x_partitions) {
                 continue;
             }
             for (int yi{y - 1}; yi <= y + 1; ++yi) {
-                if (yi < 0 || yi >27) {
+                if (yi < 0 || yi >= y_partitions) {
                     continue;
                 }
                 for (auto p2 : partition[xi][yi]) {
@@ -156,8 +180,10 @@ struct Simulator {
     void tick() {
         DAMPING_FACTOR = std::pow(0.5f, DT / DT_HALF);
         D_MAX_INV = 1.0f / D_MAX;
-        for (int x{0}; x < 28; ++x) {
-            for (int y{0}; y < 28; ++y) {
+        int x_partitions = 1320 / static_cast<int>(D_MAX);
+        int y_partitions = 1080 / static_cast<int>(D_MAX);
+        for (int x{0}; x < x_partitions; ++x) {
+            for (int y{0}; y < y_partitions; ++y) {
                 for (auto &p : partition[x][y]) {
                     updateParticleState(x, y, p);
                 }
