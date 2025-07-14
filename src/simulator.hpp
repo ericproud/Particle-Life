@@ -16,25 +16,38 @@ struct Simulator {
     ParameterModifier parameter_modifier;
     Button increase_particles_button;
     Button decrease_particles_button;
+    Button increase_color_count_button;
+    Button decrease_color_count_button;
+    Button reset_matrix_button;
+    Button randomize_matrix_button;
+    Button worm_mode_button;
+    Button equalize_distribution_button;
+    Button randomize_distribution_button;
     int num_colors;
-    int matrix_mode;
     float BETA;
     float D_MAX;
     float D_MAX_INV;
     float DT;
     float DT_HALF;
     float DAMPING_FACTOR;
+    bool is_worm_mode = false;
     //
 
     Simulator():
         particles(),
         partition(),
-        parameter_modifier({150, 911}, {150, 971}, {150, 1031}),
+        parameter_modifier({180, 911}, {180, 971}, {180, 1031}),
         attraction_modifier({101.0f, 121.0f}, 2),
-        increase_particles_button({460, 620}, {30.0f, 30.0f}),
-        decrease_particles_button({400, 620}, {30.0f, 30.0f}),
+        increase_particles_button({560, 620}, {30.0f, 30.0f}),
+        decrease_particles_button({510, 620}, {30.0f, 30.0f}),
+        increase_color_count_button({560, 565}, {30.0f, 30.0f}),
+        decrease_color_count_button({510, 565}, {30.0f, 30.0f}),
+        reset_matrix_button({200, 530}, {30.0f, 30.0f}),
+        randomize_matrix_button({200, 565}, {30.0f, 30.0f}),
+        worm_mode_button({510, 530}, {30.0f, 30.0f}),
+        equalize_distribution_button({510, 826}, {30.0f, 30.0f}),
+        randomize_distribution_button({510, 866}, {30.0f, 30.0f}),
         num_colors(2),
-        matrix_mode(0),
         BETA(0.3f),
         D_MAX(40),
         DT(0.02f),
@@ -49,6 +62,8 @@ struct Simulator {
         insertParticlesEvenDistribution(1000, 2);
         increase_particles_button.button_zone.setFillColor(sf::Color::Green);
         decrease_particles_button.button_zone.setFillColor(sf::Color::Red);
+        increase_color_count_button.button_zone.setFillColor(sf::Color::Green);
+        decrease_color_count_button.button_zone.setFillColor(sf::Color::Red);
     }
 
     void insertParticlesEvenDistribution(int num_particles, int num_colors) {
@@ -76,8 +91,7 @@ struct Simulator {
     }
 
     void buildPartition() {
-        //min x = 1920 -1080 = 840
-        //num partitions = 1080 / 40 = 27 but there is zero so actually 28
+        //DIMENSIONS 1320 X 1080
         for (int i{0}; i < 28; ++i) {
             for (int j{0}; j < 28; ++j) {
                 partition[i][j].clear();
@@ -168,6 +182,15 @@ struct Simulator {
             p.c_idx = i % num_colors;
             p.c = idx_to_color[p.c_idx];
             i++;
+        }
+    }
+
+    void randomlyDistributeParticleColors() {
+        int i;
+        for (Particle &p : particles) {
+            i = std::rand() % num_colors;
+            p.c_idx = i;
+            p.c = idx_to_color[i];
         }
     }
 

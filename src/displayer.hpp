@@ -44,7 +44,7 @@ public:
     void displayParticles(Simulator &sim) {
         drawUIBox({601, 1}, 1318, 1078);
         circle.setRadius(1.0f);
-        circle.setPointCount(64);
+        circle.setPointCount(4);
         circle.setOrigin({1.0f, 1.0f});
         //CONTAINER
         for (auto &particle : sim.particles) {
@@ -56,6 +56,7 @@ public:
 
     void displayAttractionModifier(Simulator &sim) {
         drawUIBox({1, 72}, 600, 544);
+        circle.setPointCount(32);
 
         text.setFont(font);
         text.setFillColor(sf::Color::White);
@@ -66,10 +67,32 @@ public:
         text.setPosition({10, 72});
         m_target.draw(text);
 
-        string = "RANDOMIZE\n\n\nPRESET MODE";
+        string = "RESET";
         text.setString(string);
-        text.setPosition({10, 532});
+        text.setPosition({10, 530});
         m_target.draw(text);
+        m_target.draw(sim.reset_matrix_button.button_zone);
+
+        string = "RANDOMIZE";
+        text.setString(string);
+        text.setPosition({10, 565});
+        m_target.draw(text);
+        m_target.draw(sim.randomize_matrix_button.button_zone);
+
+
+        string = "WORM MODE";
+        text.setString(string);
+        text.setPosition({275, 530});
+        m_target.draw(text);
+        m_target.draw(sim.worm_mode_button.button_zone);
+
+        string = "COLOR COUNT";
+        text.setString(string);
+        text.setPosition({275, 565});
+        m_target.draw(text);
+        m_target.draw(sim.increase_color_count_button.button_zone);
+        m_target.draw(sim.decrease_color_count_button.button_zone);
+
 
         sf::Vector2f top_left = sim.attraction_modifier.tl ;
         float box_size = 400.0f / (1.0f + static_cast<float>(sim.num_colors));
@@ -119,7 +142,7 @@ public:
         m_target.draw(sim.decrease_particles_button.button_zone);
 
         std::array<float, 7> color_dist = sim.getColorDistribution();
-        sf::Vector2f top_left = {10, 700};
+        sf::Vector2f top_left = {10, 685};
 
         rect.setOutlineThickness(1);
 
@@ -128,14 +151,21 @@ public:
             rect.setFillColor(idx_to_color[i]);
             rect.setOutlineColor(idx_to_color[i]);
             rect.setPosition(top_left + sf::Vector2f(0, i * 20));
-            printf("%f", rect.getPosition().x);
             rect.setSize({length, 20});
             m_target.draw(rect);
         }
-        string = "EQUALIZE DISTRIBUTION\n\nRANDOMIZE DISTRIBUTION";
+        string = "EQUALIZE DISTRIBUTION";
         text.setString(string);
-        text.setPosition({10, 841});
+        text.setPosition({10, 826});
         m_target.draw(text);
+
+        string = "RANDOMIZE DISTRIBUTION";
+        text.setString(string);
+        text.setPosition({10, 866});
+        m_target.draw(text);
+
+        m_target.draw(sim.equalize_distribution_button.button_zone);
+        m_target.draw(sim.randomize_distribution_button.button_zone);
     }
 
 
@@ -157,22 +187,40 @@ public:
         text.setString(string);
         text.setPosition({10, 911});
         m_target.draw(text);
-
         displaySlider(sim.parameter_modifier.beta_slider);
 
         string = "D_MAX";
         text.setString(string);
         text.setPosition({10, 971});
         m_target.draw(text);
-
         displaySlider(sim.parameter_modifier.d_max_slider);
 
         string = "DT_HALF";
         text.setString(string);
         text.setPosition({10, 1031});
         m_target.draw(text);
-
         displaySlider(sim.parameter_modifier.dt_half_slider);
+
+        sf::Vector2f temp_pos = sim.parameter_modifier.beta_slider.knob_zone.getPosition() - sf::Vector2f{15, 15};
+        string = std::to_string(sim.parameter_modifier.roundToDecimalPlaces(sim.parameter_modifier.beta_slider.getValue(), 2));
+        string = string.substr(1, 3);
+        text.setString(string);
+        text.setPosition(temp_pos);
+        m_target.draw(text);
+
+        temp_pos = sim.parameter_modifier.d_max_slider.knob_zone.getPosition() - sf::Vector2f{15, 15};
+        string = std::to_string(static_cast<int>(sim.parameter_modifier.roundToDecimalPlaces(sim.parameter_modifier.d_max_slider.getValue(), 2)));
+        string = string.substr(0, 2);
+        text.setString(string);
+        text.setPosition(temp_pos);
+        m_target.draw(text);
+
+        temp_pos = sim.parameter_modifier.dt_half_slider.knob_zone.getPosition() - sf::Vector2f{15, 15};
+        string = std::to_string(sim.parameter_modifier.roundToDecimalPlaces(sim.parameter_modifier.dt_half_slider.getValue(), 3));
+        string = string.substr(1, 4);
+        text.setString(string);
+        text.setPosition(temp_pos);
+        m_target.draw(text);
     }
 
 
