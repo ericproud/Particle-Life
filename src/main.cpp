@@ -97,6 +97,7 @@ int main()
                     if (sim.parameter_modifier.d_max_slider.isPressed(click_pos)) {
                         sim.parameter_modifier.d_max_slider.setKnobPos(click_pos);
                         sim.parameter_modifier.updateD_MAX();
+                        sim.D_MAX_updated = true;
                     }
                     if (sim.parameter_modifier.dt_half_slider.isPressed(click_pos)) {
                         sim.parameter_modifier.dt_half_slider.setKnobPos(click_pos);
