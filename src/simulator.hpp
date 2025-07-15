@@ -55,28 +55,29 @@ struct Simulator {
         DT_HALF(0.04f)
     {
         particles.reserve(50000);
-        int x_partitions = 1320 / static_cast<int>(D_MAX);
-        int y_partitions = 1080 / static_cast<int>(D_MAX);
+        int x_partitions = 1316 / static_cast<int>(D_MAX);
+        int y_partitions = 1076 / static_cast<int>(D_MAX);
 
         partition.resize(x_partitions);
         for (auto& col : partition) {
             col.resize(y_partitions);
             for (auto& cell : col) {
-                cell.reserve(100);
+                cell.reserve(5000);
             }
         }
 
-        insertParticlesEvenDistribution(10, 2);
+        insertParticlesEvenDistribution(1000, 2);
         increase_particles_button.button_zone.setFillColor(sf::Color::Green);
         decrease_particles_button.button_zone.setFillColor(sf::Color::Red);
         increase_color_count_button.button_zone.setFillColor(sf::Color::Green);
         decrease_color_count_button.button_zone.setFillColor(sf::Color::Red);
+        worm_mode_button.button_zone.setFillColor(sf::Color::Red);
     }
 
     void insertParticlesEvenDistribution(int num_particles, int num_colors) {
         for (int i = 0; i < num_particles; i++) {
-            int x = rand() % PARTICLE_AREA_SIDE_LENGTHS + PARTICLE_AREA_TOP_LEFT.x;
-            int y = rand() % PARTICLE_AREA_SIDE_LENGTHS + PARTICLE_AREA_TOP_LEFT.y;
+            int x = rand() % PARTICLE_AREA_SIDE_LENGTHS.x + PARTICLE_AREA_TOP_LEFT.x;
+            int y = rand() % PARTICLE_AREA_SIDE_LENGTHS.y + PARTICLE_AREA_TOP_LEFT.y;
             particles.emplace_back(x, y, idx_to_color[i % num_colors]);
         }
     }
@@ -99,17 +100,17 @@ struct Simulator {
 
     void buildPartition() {
         //DIMENSIONS 1320 X 1080
-        int x_partitions = 1320 / static_cast<int>(D_MAX);
-        int y_partitions = 1080 / static_cast<int>(D_MAX);
-        float cell_width = 1320.0f / x_partitions;
-        float cell_height = 1080.0f / y_partitions;
+        int x_partitions = 1316 / static_cast<int>(D_MAX);
+        int y_partitions = 1076 / static_cast<int>(D_MAX);
+        float cell_width = 1316.0f / x_partitions;
+        float cell_height = 1076.0f / y_partitions;
 
         if (D_MAX_updated) {
             partition.resize(x_partitions);
             for (auto& col : partition) {
                 col.resize(y_partitions);
                 for (auto& cell : col) {
-                    cell.reserve(100);
+                    cell.reserve(5000);
                 }
             }
             D_MAX_updated = false;
@@ -121,32 +122,55 @@ struct Simulator {
         }
 
         for (auto& p : particles) {
-            int x = static_cast<int>((p.pos.x - 600.0f) / cell_width);
-            int y = static_cast<int>(p.pos.y / cell_height);
+            int x = static_cast<int>((p.pos.x - 602.0f) / cell_width);
+            int y = static_cast<int>((p.pos.y - 2.0f) / cell_height);
             if (x >= 0 && x < x_partitions && y >= 0 && y < y_partitions) {
                 partition[x][y].emplace_back(&p);
             }
         }
     }
 
-    sf::Vector2f getAcceleration(int x, int y, Particle *p1) {
+    sf::Vector2f getAcceleration(Particle *p1) {
         sf::Vector2f accel_accumulator = {0,0};
-        int x_partitions = 1320 / static_cast<int>(D_MAX);
-        int y_partitions = 1080 / static_cast<int>(D_MAX);
+        int x_partitions = 1316 / static_cast<int>(D_MAX);
+        int y_partitions = 1076 / static_cast<int>(D_MAX);
+        float cell_width = 1316.0f / x_partitions;
+        float cell_height = 1076.0f / y_partitions;
+        int x = static_cast<int>((p1->pos.x - 602.0f) / cell_width);
+        int y = static_cast<int>(p1->pos.y / cell_height);
 
-        for (int xi{x - 1}; xi <= x + 1; ++xi) {
-            if (xi < 0 || xi >= x_partitions) {
-                continue;
-            }
-            for (int yi{y - 1}; yi <= y + 1; ++yi) {
-                if (yi < 0 || yi >= y_partitions) {
+        for (int xi{x - 2}; xi <= x + 2; ++xi) {
+            int x_wrapped = (xi + x_partitions) % x_partitions;
+
+            if (xi == x - 2 || xi == x +2) {
+                if (x_wrapped == xi) {
                     continue;
                 }
-                for (auto p2 : partition[xi][yi]) {
+            }
+            for (int yi{y - 2}; yi <= y + 2; ++yi) {
+                int y_wrapped = (yi + y_partitions) % y_partitions;
+
+                if (yi == y - 2 || yi == y + 4) {
+                    if (y_wrapped == yi) {
+                        continue;
+                    }
+                }
+                for (auto p2 : partition[x_wrapped][y_wrapped]) {
                     if (p1->pos == p2->pos) {
                         continue;
                     }
-                    const sf::Vector2f d_vec = p2->pos - p1->pos;
+                    sf::Vector2f d_vec = p2->pos - p1->pos;
+
+                    float domain_width = 1316.0f;
+                    float half_domain_width = 658.0f;
+                    if (d_vec.x > half_domain_width) d_vec = sf::Vector2f{d_vec.x - domain_width, d_vec.y};
+                    else if (d_vec.x < -half_domain_width) d_vec = sf::Vector2f{d_vec.x + domain_width, d_vec.y};
+
+                    float domain_height = 1076.0f;
+                    float half_domain_height = 538.0f;
+                    if (d_vec.y > half_domain_height) d_vec = sf::Vector2f{d_vec.x, d_vec.y - domain_height};
+                    else if (d_vec.y < -half_domain_height) d_vec = sf::Vector2f{d_vec.x, d_vec.y + domain_height};
+
                     const float d = d_vec.length();
                     accel_accumulator += D_MAX * d_vec / d * getForce(d * D_MAX_INV, attraction_modifier.attraction_matrix[p1->c_idx][p2->c_idx]);
                 }
@@ -155,37 +179,35 @@ struct Simulator {
         return accel_accumulator;
     }
 
-    void updateParticleState(int x, int y, Particle *p) {
-        p->vel = DAMPING_FACTOR * p->vel + getAcceleration(x, y, p) * DT;
+    void updateParticleState(Particle *p) {
+        p->vel = DAMPING_FACTOR * p->vel + getAcceleration(p) * DT;
         p->pos += p->vel * DT;
 
-        if (p->pos.x < 840) {
-            p->pos.x = 840;
-            p->vel.x *= -1;
+        if (p->pos.x < 602) {
+            p->pos.x += 1316;
         }
-        if (p->pos.x > 1920) {
-            p->pos.x = 1920;
-            p->vel.x *= -1;
+        if (p->pos.x >= 1918) {
+            p->pos.x -= 1316;
         }
-        if (p->pos.y < 0) {
-            p->pos.y = 0;
-            p->vel.y *= -1;
+        if (p->pos.y < 2) {
+            p->pos.y += 1076;
         }
-        if (p->pos.y > 1080) {
-            p->pos.y = 1080;
-            p->vel.y *= -1;
+        if (p->pos.y >= 1078) {
+            p->pos.y -= 1076;
         }
     }
 
     void tick() {
         DAMPING_FACTOR = std::pow(0.5f, DT / DT_HALF);
         D_MAX_INV = 1.0f / D_MAX;
-        int x_partitions = 1320 / static_cast<int>(D_MAX);
-        int y_partitions = 1080 / static_cast<int>(D_MAX);
-        for (int x{0}; x < x_partitions; ++x) {
-            for (int y{0}; y < y_partitions; ++y) {
+        int x_partitions = 1316 / static_cast<int>(D_MAX);
+        int y_partitions = 1076 / static_cast<int>(D_MAX);
+
+        #pragma omp parallel for collapse(2) schedule(dynamic)
+        for (int x = 0; x < x_partitions; ++x) {
+            for (int y = 0; y < y_partitions; ++y) {
                 for (auto &p : partition[x][y]) {
-                    updateParticleState(x, y, p);
+                    updateParticleState(p);
                 }
             }
         }
@@ -195,7 +217,7 @@ struct Simulator {
         num_colors = num;
         for (int i{0}; i < num_colors; i++) {
             for (int j{0}; j < num_colors; j++) {
-                float box_size = 300.0f / (1.0f + static_cast<float>(num));
+                float box_size = 400.0f / (1.0f + static_cast<float>(num));
                 sf::Vector2f temp_tl = attraction_modifier.tl + sf::Vector2f((i + 1) * box_size, (j + 1) * box_size);
                 attraction_modifier.button_matrix[i][j] = Button(temp_tl, {box_size, box_size});
             }
@@ -240,6 +262,11 @@ struct Simulator {
             color_count[i] = color_count[i] / num_particles;
         }
         return color_count;
+    }
+
+    float roundToDecimalPlaces(float value, int places) {
+        float scale = std::pow(10.0f, places);
+        return std::round(value * scale) / scale;
     }
 };
 

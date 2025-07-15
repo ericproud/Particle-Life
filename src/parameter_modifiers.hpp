@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/System/Vector2.hpp"
+#include "simulator.hpp"
 
 struct Button {
     sf::RectangleShape button_zone;
@@ -181,7 +182,7 @@ public:
     float DT_HALF;
     ParameterModifier(sf::Vector2f tl_BETA, sf::Vector2f tl_D_MAX, sf::Vector2f tl_DT_HALF):
     beta_slider(tl_BETA, {370, 40}, 0.1, 1, 0.3),
-    d_max_slider(tl_D_MAX, {370, 40}, 2, 40, 40),
+    d_max_slider(tl_D_MAX, {370, 40}, 2, 100, 40),
     dt_half_slider(tl_DT_HALF, {370, 40}, 0.004f, 0.08f, 0.04f),
     BETA(0.3f),
     D_MAX(40),
@@ -192,14 +193,15 @@ public:
         float scale = std::pow(10.0f, places);
         return std::round(value * scale) / scale;
     }
-
-    void updateBETA() {
-        BETA =   roundToDecimalPlaces(beta_slider.getValue(), 2);
+    /*
+    void updateBETA(Simulator& sim) {
+        sim.BETA =   roundToDecimalPlaces(beta_slider.getValue(), 2);
     }
-    void updateD_MAX() {
-        D_MAX = roundToDecimalPlaces(d_max_slider.getValue(), 2);
+    void updateD_MAX(Simulator& sim) {
+        sim.D_MAX = roundToDecimalPlaces(d_max_slider.getValue(), 2);
     }
-    void updateDT_HALF() {
-        DT_HALF = roundToDecimalPlaces(dt_half_slider.getValue(),3);
+    void updateDT_HALF(Simulator& sim) {
+        sim.DT_HALF = roundToDecimalPlaces(dt_half_slider.getValue(),3);
     }
+    */
 };
