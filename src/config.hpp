@@ -6,8 +6,8 @@
 const int SCREEN_HEIGHT = 1920;
 const int SCREEN_WIDTH = 1080;
 
-const sf::Vector2f PARTICLE_AREA_TOP_LEFT = {840, 0};
-const int PARTICLE_AREA_SIDE_LENGTHS = 1080;
+const sf::Vector2f PARTICLE_AREA_TOP_LEFT = {600, 0};
+const sf::Vector2i PARTICLE_AREA_SIDE_LENGTHS = {1316, 1076};
 
 struct ColorLess {
     bool operator()(const sf::Color& a, const sf::Color& b) const {

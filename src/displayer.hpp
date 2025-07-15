@@ -47,11 +47,14 @@ public:
         circle.setPointCount(4);
         circle.setOrigin({1.0f, 1.0f});
         //CONTAINER
-        for (auto &particle : sim.particles) {
-            circle.setFillColor(particle.c);
-            circle.setPosition(particle.pos);
-            m_target.draw(circle);
+
+        sf::VertexArray points(sf::PrimitiveType::Points, sim.particles.size());
+
+        for (std::size_t i = 0; i < sim.particles.size(); ++i) {
+            points[i].position = sim.particles[i].pos;
+            points[i].color = sim.particles[i].c;
         }
+        m_target.draw(points);
     }
 
     void displayAttractionModifier(Simulator &sim) {
