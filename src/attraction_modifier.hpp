@@ -193,15 +193,4 @@ public:
         float scale = std::pow(10.0f, places);
         return std::round(value * scale) / scale;
     }
-    /*
-    void updateBETA(Simulator& sim) {
-        sim.BETA =   roundToDecimalPlaces(beta_slider.getValue(), 2);
-    }
-    void updateD_MAX(Simulator& sim) {
-        sim.D_MAX = roundToDecimalPlaces(d_max_slider.getValue(), 2);
-    }
-    void updateDT_HALF(Simulator& sim) {
-        sim.DT_HALF = roundToDecimalPlaces(dt_half_slider.getValue(),3);
-    }
-    */
 };

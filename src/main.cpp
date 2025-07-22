@@ -5,24 +5,26 @@
 
 int main()
 {
-
+    //This is a check to ensure that multithreading is enabled and working
     std::cout << "Running with " << omp_get_max_threads() << " threads\n";
 
+    //Initializing the display
     sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
     sf::RenderWindow window(desktopMode, "Particle Life", sf::Style::Default,  sf::State::Fullscreen);
     window.setFramerateLimit(60);
-
-    Simulator sim;
     Displayer displayer(window);
-    sf::Clock clock;
 
-    int event_fps = 0;
+    //Initializing the simulator
+    Simulator sim;
+
+    //Initializing the clock and FPS counters
+    sf::Clock clock;
     int physics_fps = 0;
     int graphics_fps = 0;
 
     while (window.isOpen())
     {
-        //EVENT POLLING WORK
+        //Event polling
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -33,7 +35,7 @@ int main()
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
                     auto click_pos = static_cast<sf::Vector2f>(mouseButtonPressed->position);
 
-                    //HANDLING MATRIX INTERACTIONS
+                    //Handling manual attraction matrix manipulation
                     for (int i{0}; i < 7; ++i) {
                         for (int j{0}; j < 7; ++j) {
                             if (sim.attraction_modifier.button_matrix[i][j].isPressed(click_pos)) {
@@ -43,30 +45,8 @@ int main()
                             }
                         }
                     }
-                    if (sim.increase_color_count_button.isPressed(click_pos)) {
-                        if (sim.num_colors < 7) {
-                            sim.setNumColors(sim.num_colors + 1);
-                        }
-                        else {
-                            sim.setNumColors(1);
-                        }
-                        sim.evenlyDiststributeParticleColors();
-                        if (sim.is_worm_mode) {
-                            sim.attraction_modifier.wormAttractinMatrix(sim.num_colors);
-                        }
-                    }
-                    if (sim.decrease_color_count_button.isPressed(click_pos)) {
-                        if (sim.num_colors > 1) {
-                            sim.setNumColors(sim.num_colors - 1);
-                        }
-                        else {
-                            sim.setNumColors(7);
-                        }
-                        sim.evenlyDiststributeParticleColors();
-                        if (sim.is_worm_mode) {
-                            sim.attraction_modifier.wormAttractinMatrix(sim.num_colors);
-                        }
-                    }
+
+                    //Handling matrix preset mode buttons (reset, randomize, snake mode)
                     if (sim.reset_matrix_button.isPressed(click_pos)) {
                         sim.attraction_modifier.zeroAttractionMatrix();
                         sim.is_worm_mode = false;
@@ -83,51 +63,77 @@ int main()
                         sim.worm_mode_button.button_zone.setFillColor(sf::Color::Green);
                     }
 
-                    //HANDLING PARTICLE COUNT/COLOR INTERACTIONS
+                    //Handling changes to the particle count
+                    if (sim.increase_color_count_button.isPressed(click_pos)) {
+                        if (sim.num_colors < 7) {
+                            sim.setNumColors(sim.num_colors + 1);
+                        }
+                        else {
+                            sim.setNumColors(1);
+                        }
+                        sim.evenlyDistributeParticleColors();
+                        if (sim.is_worm_mode) {
+                            sim.attraction_modifier.wormAttractinMatrix(sim.num_colors);
+                        }
+                    }
+                    if (sim.decrease_color_count_button.isPressed(click_pos)) {
+                        if (sim.num_colors > 1) {
+                            sim.setNumColors(sim.num_colors - 1);
+                        }
+                        else {
+                            sim.setNumColors(7);
+                        }
+                        sim.evenlyDistributeParticleColors();
+                        if (sim.is_worm_mode) {
+                            sim.attraction_modifier.wormAttractinMatrix(sim.num_colors);
+                        }
+                    }
+
+                    //Handling adding and removing particles
                     if (sim.increase_particles_button.isPressed(click_pos)) {
                         sim.insertParticlesEvenDistribution(500, sim.num_colors);
                     }
                     if (sim.decrease_particles_button.isPressed(click_pos)) {
                         sim.removeParticles(500);
                     }
+
+                    //Handling changes to the distribution of particle colors (equal, random)
                     if (sim.randomize_distribution_button.isPressed(click_pos)) {
                         sim.randomlyDistributeParticleColors();
                     }
                     if (sim.equalize_distribution_button.isPressed(click_pos)) {
-                        sim.evenlyDiststributeParticleColors();
+                        sim.evenlyDistributeParticleColors();
                     }
 
-                    //HANDLING PARAMETER INTERACTIONS
+                    //Handling changes to simulation parameters (beta, d max, dt half)
                     if (sim.parameter_modifier.beta_slider.isPressed(click_pos)) {
                         sim.parameter_modifier.beta_slider.setKnobPos(click_pos);
-                        sim.BETA =   sim.roundToDecimalPlaces(sim.parameter_modifier.beta_slider.getValue(), 2);
+                        sim.beta =   sim.roundToDecimalPlaces(sim.parameter_modifier.beta_slider.getValue(), 2);
                     }
                     if (sim.parameter_modifier.d_max_slider.isPressed(click_pos)) {
                         sim.parameter_modifier.d_max_slider.setKnobPos(click_pos);
-                        sim.D_MAX = sim.roundToDecimalPlaces(sim.parameter_modifier.d_max_slider.getValue(), 2);
-                        sim.D_MAX_updated = true;
+                        sim.d_max = sim.roundToDecimalPlaces(sim.parameter_modifier.d_max_slider.getValue(), 2);
+                        sim.d_max_updated = true;
                     }
                     if (sim.parameter_modifier.dt_half_slider.isPressed(click_pos)) {
                         sim.parameter_modifier.dt_half_slider.setKnobPos(click_pos);
-                        sim.DT_HALF = sim.roundToDecimalPlaces(sim.parameter_modifier.dt_half_slider.getValue(),3);
+                        sim.dt_half = sim.roundToDecimalPlaces(sim.parameter_modifier.dt_half_slider.getValue(),3);
                     }
                 }
             }
         }
 
-        event_fps = sim.getFPS(clock);
-
-        //PHYSICS WORK
+        //Simulation steps
         sim.buildPartition();
         sim.tick();
 
         physics_fps = sim.getFPS(clock);
 
-        //GRAPHICS WORK
+        //Graphics steps
         window.clear();
         displayer.displayParticles(sim);
         displayer.displayAttractionModifier(sim);
-        displayer.displayFPS(event_fps, physics_fps, graphics_fps);
+        displayer.displayFPS(physics_fps, graphics_fps);
         displayer.displayParticleCountAndDistribution(sim);
         displayer.displayParameterModifier(sim);
         window.display();
