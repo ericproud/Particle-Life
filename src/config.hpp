@@ -3,12 +3,18 @@
 #include <map>
 #include <tuple>
 
-const int SCREEN_HEIGHT = 1920;
-const int SCREEN_WIDTH = 1080;
+//Defining window dimensions
+const float SCREEN_HEIGHT = 1920.0f;
+const float SCREEN_WIDTH = 1080.0f;
 
-const sf::Vector2f PARTICLE_AREA_TOP_LEFT = {600, 0};
-const sf::Vector2i PARTICLE_AREA_SIDE_LENGTHS = {1316, 1076};
+//Defining the area where particles are contained and displayed
+const sf::Vector2f PARTICLE_AREA = {1316.0f, 1076.0f};
+const sf::Vector2f PARTICLE_AREA_HALF = {658.0f, 538.0f};
+const sf::Vector2f PARTICLE_AREA_TL= {602.0f, 2.0f};
+const sf::Vector2f PARTICLE_AREA_BR= {1918.0f, 1078.0f};
 
+//Unimportant to understand, this is used as a way to order sf::Color objects
+//so they can be mapped in color_to_idx and idx_to_color
 struct ColorLess {
     bool operator()(const sf::Color& a, const sf::Color& b) const {
         // lex order by r, g, b, a
@@ -16,6 +22,7 @@ struct ColorLess {
     }
 };
 
+//Used to map colors to indices and vice versa, used often when working with the attraction matrix
 inline std::map<sf::Color, int, ColorLess> color_to_idx = {
                                                     {sf::Color::White, 0},
                                                     {sf::Color::Red, 1},
