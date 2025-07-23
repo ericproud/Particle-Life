@@ -55,5 +55,12 @@ Making this program has taught me that I can truly make whatever I want with eno
 - Clone the repository to your device
 - Run CMake
 - Select the location of the repository
-  <img width="726" height="669" alt="image" src="https://github.com/user-attachments/assets/54ccb0ec-5d9c-43fa-8e0e-04fb939ed26e" />
+- Build binaries at /build (This folder will be created for you)
+<img width="726" height="669" alt="image" src="https://github.com/user-attachments/assets/54ccb0ec-5d9c-43fa-8e0e-04fb939ed26e" />
+- Click on configure and click yes when prompted to create the build directory
+<img width="725" height="669" alt="image" src="https://github.com/user-attachments/assets/d93b6813-a43d-497c-bbd0-714d33e98197" />
+- Click Finish
+<img width="721" height="670" alt="Screenshot 2025-07-23 113058" src="https://github.com/user-attachments/assets/d0f9e2a0-5aa3-4e47-9305-b5b2f7e314f2" />
+
+
 
