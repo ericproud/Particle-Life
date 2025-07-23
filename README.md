@@ -61,6 +61,23 @@ Making this program has taught me that I can truly make whatever I want with eno
   <img width="725" height="669" alt="image" src="https://github.com/user-attachments/assets/d93b6813-a43d-497c-bbd0-714d33e98197" />
 - Click Finish
   <img width="721" height="670" alt="Screenshot 2025-07-23 113058" src="https://github.com/user-attachments/assets/d0f9e2a0-5aa3-4e47-9305-b5b2f7e314f2" />
+- The configuration process can be lengthy (upwards of 3 minutes), let it run until completion
+-Click Generate
+  <img width="728" height="673" alt="image" src="https://github.com/user-attachments/assets/efdbc387-1fad-4373-a1a5-87ee49b27a78" />
+- Click Open Project
+  <img width="723" height="673" alt="image" src="https://github.com/user-attachments/assets/82c19795-d0f2-4a82-8926-48e53f4333a6" />
+- ###### In Visual Studio, click on main and select Set as Startup Project (THIS IS NECESSARY OR ELSE THERE WILL BE AN ERROR)
+  <img width="1919" height="1079" alt="Screenshot 2025-07-23 115254" src="https://github.com/user-attachments/assets/3989ee31-5e9e-4e99-9b3a-d7b6371d0eb1" />
+- Change from debug to release mode for optimal performance
+  <img width="1919" height="1079" alt="Screenshot 2025-07-23 120308" src="https://github.com/user-attachments/assets/bedc902f-d8ee-43d2-93fd-597b1a0ccc4d" />
+- Run the program
+  <img width="1918" height="1078" alt="image" src="https://github.com/user-attachments/assets/77a32a17-784b-4f92-af80-66e9341b5898" />
+  
+
+
+
+  
+
 
 
 
