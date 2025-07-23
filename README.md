@@ -54,4 +54,6 @@ Making this program has taught me that I can truly make whatever I want with eno
 
 - Clone the repository to your device
 - Run CMake
-- Select the loca
+- Select the location of the repository
+  <img width="726" height="669" alt="image" src="https://github.com/user-attachments/assets/54ccb0ec-5d9c-43fa-8e0e-04fb939ed26e" />
+
