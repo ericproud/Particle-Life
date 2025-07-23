@@ -44,4 +44,14 @@ This project is an implementation of the [Particle Life Engine](https://particle
 
 Making this program has taught me that I can truly make whatever I want with enough time and effort without the need to use any fancy frameworks or libraries to get stuff done. At the beginning of the project, I remember looking for a button class in the SFML documentation because that was what I was used to. But as I learned there was no class made for me, I came to a seemingly obvious conclusion in hindsight, I can just make the class myself with ease. All that I needed is to define the area the button takes up, a variable stating whether it had been pressed, and set up event handling in my main loop to see if the button is clicked. Just like that, in less time than I spent looking for a button class, I had created a button class for myself. This realization inspired me to stop looking for help at every turn and break problems down into their simplest form and see that many seemingly complicated systems are not too hard to program. The ability to create whatever I want from the ground up is what drew me to spend part of my summer on C++ and it has taught me so much about what I can really do with code and the immense power that simple code can have.
 
-# Installation
+# Windows Installation
+
+### Prerequisites
+
+- Have CMake, and Visual Studios 2022 Installed
+
+### Compilation
+
+- Clone the repository to your device
+- Run CMake
+- Select the loca
