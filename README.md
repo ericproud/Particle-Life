@@ -56,16 +56,16 @@ Making this program has taught me that I can truly make whatever I want with eno
 - Run CMake
 - Select the location of the repository
 - Build binaries at /build (This folder will be created for you)
-  <img width="726" height="669" alt="image" src="https://github.com/user-attachments/assets/54ccb0ec-5d9c-43fa-8e0e-04fb939ed26e" />
+  <img width="907" height="831" alt="image" src="https://github.com/user-attachments/assets/c3e1af44-d677-42dc-9362-8aa40808be5f" />
 - Click on configure and click yes when prompted to create the build directory
-  <img width="725" height="669" alt="image" src="https://github.com/user-attachments/assets/d93b6813-a43d-497c-bbd0-714d33e98197" />
+  <img width="903" height="833" alt="image" src="https://github.com/user-attachments/assets/620dfedb-0373-4dd1-84b7-7e4cc106bf04" />
 - Click Finish
-  <img width="721" height="670" alt="Screenshot 2025-07-23 113058" src="https://github.com/user-attachments/assets/d0f9e2a0-5aa3-4e47-9305-b5b2f7e314f2" />
+  <img width="900" height="837" alt="image" src="https://github.com/user-attachments/assets/01107a8f-1b02-4567-b90f-a53a08eda273" />
 - The configuration process can be lengthy (upwards of 3 minutes), let it run until completion
--Click Generate
-  <img width="728" height="673" alt="image" src="https://github.com/user-attachments/assets/efdbc387-1fad-4373-a1a5-87ee49b27a78" />
+- Click Generate
+  <img width="907" height="837" alt="image" src="https://github.com/user-attachments/assets/71bccd52-4790-4174-8e10-c677dcf8669d" />
 - Click Open Project
-  <img width="723" height="673" alt="image" src="https://github.com/user-attachments/assets/82c19795-d0f2-4a82-8926-48e53f4333a6" />
+  <img width="906" height="837" alt="image" src="https://github.com/user-attachments/assets/07f0e838-ded3-4047-88b0-67d99f4049b0" />
 - ###### In Visual Studio, click on main and select Set as Startup Project (THIS IS NECESSARY OR ELSE THERE WILL BE AN ERROR)
   <img width="1919" height="1079" alt="Screenshot 2025-07-23 115254" src="https://github.com/user-attachments/assets/3989ee31-5e9e-4e99-9b3a-d7b6371d0eb1" />
 - Change from debug to release mode for optimal performance
