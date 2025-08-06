@@ -58,7 +58,7 @@ Making this program has taught me that I can truly make whatever I want with eno
 - Build binaries at /build (This folder will be created for you)
   <img width="907" height="831" alt="image" src="https://github.com/user-attachments/assets/c3e1af44-d677-42dc-9362-8aa40808be5f" />
 - Click on configure and click yes when prompted to create the build directory
-  <img width="903" height="833" alt="image" src="https://github.com/user-attachments/assets/620dfedb-0373-4dd1-84b7-7e4cc106bf04" />
+  <img width="987" height="910" alt="image" src="https://github.com/user-attachments/assets/0b0c065b-8808-43a5-870e-27754e0dd95d" />
 - Click Finish
   <img width="900" height="837" alt="image" src="https://github.com/user-attachments/assets/01107a8f-1b02-4567-b90f-a53a08eda273" />
 - The configuration process can be lengthy (upwards of 3 minutes), let it run until completion
